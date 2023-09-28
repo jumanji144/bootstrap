@@ -1,0 +1,59 @@
+statement := ( expression_statement )
+
+expression_statement := expression? semicolon
+
+expression := tenary_expression
+tenary_expression := or_expression (question_mark or_expression colon or_expression)*
+or_expression := bool_xor_expression (pipe pipe bool_xor_expression)*
+bool_xor_expression := and_expression (hat hat and_expression)*
+and_expression := equality_expression (ampersand ampersand equality_expression)*
+equality_expression := relational_expression ((equal | not_equal) relational_expression)*
+relational_expression := binary_or_expression ((less_than | greater_than | less_than_equal | greater_than_equal) binary_or_expression)*
+binary_or_expression := binary_xor_expression (pipe binary_xor_expression)*
+binary_xor_expression := binary_and_expression (hat binary_and_expression)*
+binary_and_expression := shift_expression (ampersand shift_expression)*
+shift_expression := additive_expression ((left_shift | right_shift) additive_expression)*
+additive_expression := multiplicative_expression ((plus | minus) multiplicative_expression)*
+multiplicative_expression := unary_expression ((star | slash | percent) unary_expression)*
+unary_expression := (plus | minus | tilde | bang) unary_expression | cast_expression
+cast_expression := (l_paren type_name r_paren)* factor
+factor := literal | expression | (l_paren expression r_paren) | dereference_expression | address_of_expression | function_call | identifier | member_access
+dereference_expression := star factor
+address_of_expression := ampersand factor
+
+function_call := identifier l_paren (expression (comma expression)*)? r_paren
+member_access := factor (dot identifier)*
+literal := number | string | character
+
+
+identifier := (letter | underscore) (letter | digit | underscore)*
+
+string := double_quote string_content double_quote
+string_content := (character)*
+
+character := single_quote character_content single_quote
+
+character_content := (escape_sequence | character_literal)
+
+escape_sequence := backslash (single_quote | double_quote | backslash | question_mark | a | b | f | n | r | t | v | octal_digit+ | x hex_digit+ | u hex_digit+ hex_digit+ hex_digit+ hex_digit+ | U hex_digit+ hex_digit+ hex_digit+ hex_digit+ hex_digit+ hex_digit+ hex_digit+ hex_digit+)
+character_literal := [^'\\]
+
+number := floating_point | integer
+
+integer := (decimal | hexadecimal | binary | octal) (integer_suffix)?
+integer_suffix := (u | l | ll | ul | ul | ull)
+
+floating_point := (decimal | hexadecimal) (floating_point_suffix)?
+floating_point_suffix := (f | l | lf)
+
+decimal := digit+
+hexadecimal := (0x | 0X) hex_digit+
+
+binary := (0b | 0B) binary_digit+
+octal := 0 octal_digit+
+
+letter := [a-zA-Z]
+digit := [0-9]
+hex_digit := [0-9a-fA-F]
+binary_digit := [01]
+octal_digit := [0-7]
